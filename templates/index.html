@@ -7,7 +7,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <title>МОСЭКОМОНИТОРИНГ</title>
+    <title>Moscow Secure Traffic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     {% block link %}
         <link rel="stylesheet" href="{% static 'font/iconsmind-s/css/iconsminds.css' %}"/>
@@ -25,11 +25,9 @@
         <link rel="stylesheet" href="{% static 'css/vendor/component-custom-switch.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
 
-    {% endblock %}
-    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/png">
 
-    {#    MAPBOX#}
-    <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css" rel="stylesheet"/>
+    {% endblock %}
+{#    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/png">#}
 
     <style type="text/css">
         .station {
@@ -123,10 +121,10 @@
     </div>
 
 
-    <a class="navbar-logo" href="Dashboard.Default.html">
-        <span class="logo d-none d-xs-block"></span>
-        <span class="logo-mobile d-block d-xs-none"></span>
-    </a>
+{#    <a class="navbar-logo" href="Dashboard.Default.html">#}
+{#        <span class="logo d-none d-xs-block"></span>#}
+{#        <span class="logo-mobile d-block d-xs-none"></span>#}
+{#    </a>#}
 
     <div class="navbar-right">
         <div class="header-icons d-inline-block align-middle">
@@ -163,21 +161,21 @@
                             <i class="iconsminds-monitor-analytics"></i> Статистика
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'predict' %}">{# #applications#}
-                            <i class="iconsminds-statistic"></i> Прогноз
-                        </a>
-                    </li>
+{#                    <li>#}
+{#                        <a href="{% url 'predict' %}">{# #applications#}
+{#                            <i class="iconsminds-statistic"></i> Прогноз#}
+{#                        </a>#}
+{#                    </li>#}
                     <li>
                         <a href="{% url 'location' %}">{# #ui#}
                             <i class="iconsminds-map2"></i> Засечь место
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'create_model' %}">{# #menu#}
-                            <i class="iconsminds-coding"></i> Создание модели
-                        </a>
-                    </li>
+{#                    <li>#}
+{#                        <a href="{% url 'create_model' %}">{# #menu#}
+{#                            <i class="iconsminds-coding"></i> Создание модели#}
+{#                        </a>#}
+{#                    </li>#}
                     <li>
                         <a href="{% url 'docs' %}">
                             <i class="iconsminds-library"></i> Информация
@@ -388,7 +386,29 @@
     <script src="{% static 'js/startrek.script.js' %}"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
     <script src="{% static 'js/docs.js' %}"></script>
-
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=0f5c46ab-d8c9-4489-b1cb-09582c08719c&modules=traffic&lang=ru_RU" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                // Функция ymaps.ready() будет вызвана, когда
+                // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+                ymaps.ready(init);
+                var traffic = new YMaps.Traffic.Control();
+                function init() {
+                    // Создание карты.
+                    var myMap = new ymaps.Map("map", {
+                        // Координаты центра карты.
+                        // Порядок по умолчанию: «широта, долгота».
+                        // Чтобы не определять координаты центра карты вручную,
+                        // воспользуйтесь инструментом Определение координат.
+                        center: [55.76, 37.64],
+                        // Уровень масштабирования. Допустимые значения:
+                        // от 0 (весь мир) до 19.
+                        zoom: 12
+                    });
+                }
+                traffic.show();
+            });
+        </script>
     <script>
         $(document).ready(function () {
             let document_ht = window.innerHeight;
@@ -407,768 +427,6 @@
 
     </script>
 
-    {# MAPBOX #}
-    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
-
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
-
-    <script type="text/javascript">
-        jQuery(function () {
-
-            function showAlert() {
-                $('#veshestva').show(400);
-            }
-
-            setInterval(showAlert, 10000);
-
-
-            $('#close_alert').click(function () {
-                $('#veshestva').hide(400);
-            });
-
-            var prom =
-            {{ prom|safe }}
-            var build =
-            {{ build|safe }}
-            var data = {{ data|safe }};
-            var rubbish =
-            {{ rubbish|safe }}
-
-            const PDK = {co: 5, no: 0.4, no2: 0.2, pm10: 0.3, pm25: 0.16};
-
-
-            var apiKey = "c053d5ae05234ab2a5b1adb9d9157932"; // Your BreezoMeter API key
-            var mapBoxAccessToken = "pk.eyJ1IjoiZndlZHNmIiwiYSI6ImNrdW51eHU1ZzFyMjAycHJ2cHR1b3lqOGcifQ.gI7aoa75R-B_PY9sKSdNlQ"; // your mapbox access token from: https://account.mapbox.com
-            mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js');
-            var apiWeather = "f3aabf02ac4cec5bf09c6940ff8cc397"
-            var errorMessageBrz =
-                "Update the variable 'apiKey' with a BreezoMeter API key to see the tiles. Contact BreezoMeter if you need any help:    breezometer.com/contact-us";
-            var errorMessageMapbox =
-                "Update the variable 'mapBoxAccessToken' with a Mapbox Access Token to initialize the Mapbox SDK. You can get it from:                https://account.mapbox.com";
-
-            if (apiKey === "") alert(errorMessageBrz);
-            if (mapBoxAccessToken === "") alert(errorMessageMapbox);
-            var map = new mapboxgl.Map({
-                container: "map",
-                style: "mapbox://styles/mapbox/streets-v11", // your stylesheet location
-                center: [37.623856, 55.751574], // starting position [lng, lat]
-                zoom: 10, // starting zoom
-                pitch: 45,
-                doubleClickZoom: false,
-                bearing: 0,
-                accessToken: mapBoxAccessToken
-            });
-
-            var nav = new mapboxgl.NavigationControl({
-                showCompass: true,
-                showZoom: true
-            });
-            const language = new MapboxLanguage();
-            map.addControl(language);
-
-            map.addControl(nav, 'bottom-right');
-
-            map.addControl(new mapboxgl.FullscreenControl(), 'bottom-left'); // full screen
-
-
-            const deltaDistance = 100;
-
-            function getHTML(prop) {
-
-                var html = `<h3>${prop.title}</h3><hr/>
-                            <div>Показатель `;
-                $('.vev').each(function () {
-                    if ($(this).hasClass('shadow-lg')) {
-                        html += $(this).attr('id') != 'pm25' ? $(this).attr('id').toUpperCase() : 'PM2.5';
-                        html += ' равен ' + prop[$(this).attr('id')] + ` мг/м<sup>3</sup></div>
-                           <div>Относительно ПДК<sub>`;
-                        html += $(this).attr('id') != 'pm25' ? $(this).attr('id').toUpperCase() : 'PM2.5';
-                        html += `</sub>: ${(prop[$(this).attr('id')] / PDK[$(this).attr('id')]).toFixed(4)}</div>`
-                    }
-                });
-                return html
-            };
-
-// degrees the map rotates when the left or right arrow is clicked
-            const deltaDegrees = 25;
-
-            function easing(t) {
-                return t * (2 - t);
-            }
-
-            $('.vev').click(function () {
-                $('.vev').each(function () {
-                    $(this).removeClass('shadow-lg');
-                });
-                $(this).addClass('shadow-lg');
-            });
-
-            {#  map on load #}
-            map.on("load", function () {
-                    addRasterSource();
-                    addRasterLayer();
-                    addPopulLayer();
-                    addTempLayer();
-                    addPALayer();
-                    addWNDLayer();
-                    addPRLayer();
-                    addHumLayer();
-                    addRoadsSource();
-                    addRoadsLayer();
-
-                    map.setLayoutProperty('popul', 'visibility', 'none');
-
-
-                    {#  draw 3d build #}
-                    const layers = map.getStyle().layers;
-                    const labelLayerId = layers.find(
-                        (layer) => layer.type === 'symbol' && layer.layout['text-field']
-                    ).id;
-                    map.addLayer(
-                        {
-                            'id': 'add-3d-buildings',
-                            'source': 'composite',
-                            'source-layer': 'building',
-                            'filter': ['==', 'extrude', 'true'],
-                            'type': 'fill-extrusion',
-                            'minzoom': 10,
-                            'paint': {
-                                'fill-extrusion-color': '#777777',
-
-// Use an 'interpolate' expression to
-// add a smooth transition effect to
-// the buildings as the user zooms in.
-                                'fill-extrusion-height': [
-                                    'interpolate',
-                                    ['linear'],
-                                    ['zoom'],
-                                    15,
-                                    0,
-                                    15.05,
-                                    ['get', 'height']
-                                ],
-                                'fill-extrusion-base': [
-                                    'interpolate',
-                                    ['linear'],
-                                    ['zoom'],
-                                    15,
-                                    0,
-                                    15.05,
-                                    ['get', 'min_height']
-                                ],
-                                'fill-extrusion-opacity': 0.6
-                            }
-                        },
-                        labelLayerId
-                    );
-
-                    {# end draw 3d build  #}
-
-                    {#                custom play#}
-
-                    map.getCanvas().focus();
-
-                    map.getCanvas().addEventListener(
-                        'keydown',
-                        (e) => {
-                            e.preventDefault();
-                            if (e.which === 38) {
-// up
-                                map.panBy([0, -deltaDistance], {
-                                    easing: easing
-                                });
-                            } else if (e.which === 40) {
-// down
-                                map.panBy([0, deltaDistance], {
-                                    easing: easing
-                                });
-                            } else if (e.which === 37) {
-// left
-                                map.easeTo({
-                                    bearing: map.getBearing() - deltaDegrees,
-                                    easing: easing
-                                });
-                            } else if (e.which === 39) {
-// right
-                                map.easeTo({
-                                    bearing: map.getBearing() + deltaDegrees,
-                                    easing: easing
-                                });
-                            }
-                        },
-                        true
-                    );
-
-                    {#  end custom play#}
-
-                    var weather = ['temp', 'precipitation', 'pressure', 'speed', 'humidity']
-                    for (const i of weather) {
-                        map.setLayoutProperty(i, 'visibility', 'none');
-                    }
-
-
-                    $('#weather-btn').click(function () {
-                        let vivsible = map.getLayoutProperty('temp', 'visibility');
-                        if (vivsible === 'visible' || typeof vivsible === 'undefined') {
-                            map.setLayoutProperty('temp', 'visibility', 'none');
-                            $('#temp').removeClass('shadow-lg');
-                            map.setLayoutProperty('breez', 'visibility', 'visible');
-                            $('#veva').show();
-                            $('#breez').addClass('activ');
-                            $(this).removeClass('activ');
-                            $('#co').addClass('shadow-lg');
-                            $('#wthr').hide();
-                        } else {
-                            map.setLayoutProperty('temp', 'visibility', 'visible');
-                            map.setLayoutProperty('breez', 'visibility', 'none');
-                            $('#veva').hide();
-                            $('#wthr').show();
-                            $('.vev').each(() => {
-                                $(this).removeClass('shadow-lg');
-                            });
-                            $('#temp').addClass('shadow-lg');
-                            $('#breez').removeClass('activ');
-                            $(this).addClass('activ');
-                        }
-                    });
-
-                    $('#prom').click(function () {
-                        $('.prom').each(function () {
-                            if ($(this).is(':visible')) {
-                                $(this).hide(800);
-                                $('#prom').removeClass('activ');
-                            } else {
-                                $(this).show(800);
-                                $('#prom').addClass('activ');
-                            }
-                        });
-                    });
-
-                    $('#rub').click(function () {
-                        $('.rubbish').each(function () {
-                            if ($(this).is(':visible')) {
-                                $(this).hide(800);
-                                $('#rub').removeClass('activ');
-                            } else {
-                                $(this).show(800);
-                                $('#rub').addClass('activ');
-                            }
-                        });
-                    });
-
-                    $('#popul').click(function () {
-                        let vivsible = map.getLayoutProperty('popul', 'visibility');
-                        if (vivsible === 'visible' || typeof vivsible === 'undefined') {
-                            map.setLayoutProperty('popul', 'visibility', 'none');
-                            $(this).removeClass('activ');
-                        } else {
-                            map.setLayoutProperty('popul', 'visibility', 'visible');
-                            $(this).addClass('activ');
-                        }
-                    });
-
-                    $('#car').click(function () {
-                        let vivsible = map.getLayoutProperty('car', 'visibility');
-                        if (vivsible === 'visible' || typeof vivsible === 'undefined') {
-                            map.setLayoutProperty('car', 'visibility', 'none');
-                            $(this).removeClass('activ');
-                        } else {
-                            map.setLayoutProperty('car', 'visibility', 'visible');
-                            $(this).addClass('activ');
-                        }
-                    });
-
-                    $('.filter').click(function () {
-                        console.log($(this).attr('id'));
-                        let vivsible = map.getLayoutProperty($(this).attr('id'), 'visibility');
-                        if (vivsible === 'visible' || typeof vivsible === 'undefined') {
-                            for (const i of weather) {
-                                map.setLayoutProperty(i, 'visibility', 'none');
-                                $(this).removeClass('shadow-lg');
-                            }
-
-                        } else {
-                            for (const i of weather) {
-                                if (i == $(this).attr('id')) {
-                                    map.setLayoutProperty(i, 'visibility', 'visible');
-                                    $(this).addClass('shadow-lg');
-                                } else {
-                                    map.setLayoutProperty(i, 'visibility', 'none');
-                                    $('#' + i).removeClass('shadow-lg');
-                                }
-                            }
-                        }
-                    });
-                    $('#station').click(function () {
-                        $('.station').each(function () {
-                            if ($(this).is(':visible')) {
-                                $(this).hide(800);
-                                $('#station').removeClass('activ');
-                            } else {
-                                $(this).show(800);
-                                $('#station').addClass('activ');
-                            }
-                        });
-                    });
-
-                    $('#build').click(function () {
-                        $('.build').each(function () {
-                            if ($(this).is(':visible')) {
-                                $(this).hide(800);
-                                $('#build').removeClass('activ');
-                            } else {
-                                $(this).show(800);
-                                $('#build').addClass('activ');
-                            }
-                        });
-                    });
-
-
-                    $('#breez').click(function () {
-                        let vivsible = map.getLayoutProperty('breez', 'visibility');
-                        if (vivsible === 'visible' || typeof vivsible === 'undefined') {
-                            map.setLayoutProperty('breez', 'visibility', 'none');
-                            $(this).removeClass('activ');
-
-                        } else {
-                            map.setLayoutProperty('breez', 'visibility', 'visible');
-                            $('#veva').show();
-                            $(this).addClass('activ');
-                            $('#weather-btn').removeClass('activ');
-                            $('#wthr').hide();
-                            for (const i of weather) {
-                                $('#' + id).removeClass('shadow-lg');
-                                map.setLayoutProperty('temp', 'visibility', 'none');
-                            }
-
-                        }
-                    });
-
-                    {#rotateCamera(100);#}
-                }
-            );
-
-
-            {# end map on load #}
-
-
-            function rotateCamera(timestamp) {
-// clamp the rotation between 0 -360 degrees
-// Divide timestamp by 100 to slow rotation to ~10 degrees / sec
-                map.rotateTo((timestamp / 100) % 360, {duration: 0});
-// Request the next frame of the animation.
-                requestAnimationFrame(rotateCamera);
-            }
-
-
-            {# set station #}
-            const popup = new mapboxgl.Popup({
-                closeButton: false,
-                closeOnClick: false
-            });
-
-            for (const {geometry, properties} of data.features) {
-                let el = document.createElement('div');
-                el.className = 'marker station';
-                el.id = "popus" + properties.id;
-                var marker = new mapboxgl.Marker(el).setLngLat(geometry.coordinates).setPopup(
-                    new mapboxgl.Popup({offset: 25}) // add popups
-                        .setHTML(properties.html)
-                ).addTo(map);
-                var markerDiv = marker.getElement();
-                markerDiv.addEventListener('mouseenter', () => popup.setLngLat(geometry.coordinates).setHTML(getHTML(properties)).addTo(map));
-                markerDiv.addEventListener('mouseleave', () => popup.remove());
-            }
-
-            {#  end set station #}
-
-
-            {#            set prom#}
-
-            for (const {geometry, properties} of prom.features) {
-                let el = document.createElement('div');
-                el.className = 'marker prom';
-                el.id = "prom" + properties.id;
-                el.style.display = 'none';
-                new mapboxgl.Marker(el).setLngLat(geometry.coordinates).setPopup(
-                    new mapboxgl.Popup({offset: 25}) // add popups
-                        .setHTML(`<h1>${properties.title}</h1><hr/><p>${properties.discript}</p><hr/><p>${properties.ind}</p><hr/><p>${properties.phone}</p><hr/><p>${properties.email}</p><hr/>`)
-                ).addTo(map);
-            }
-
-            {#  end set prom#}
-
-
-            for (const {geometry, properties} of rubbish.features) {
-                let el = document.createElement('div');
-                el.className = 'marker rubbish';
-                el.id = "rubbish" + properties.id;
-                el.style.display = 'none';
-                new mapboxgl.Marker(el).setLngLat(geometry.coordinates).setPopup(
-                    new mapboxgl.Popup({offset: 25}) // add popups
-                        .setHTML(`<h1>${properties.title}</h1><hr/><p>Адрес: ${properties.address}</p><hr/><p>Индекс: ${properties.index}</p><hr/><p>Тел.: ${properties.phone}</p><hr/><p>Почта: ${properties.email}</p><hr/><p>Площадь: ${properties.S}</p><hr/><p>Статус: ${properties.status}</p><hr/>`)
-                ).addTo(map);
-            }
-
-
-            {#            set build #}
-
-            for (const {geometry, properties} of build.features) {
-                let el = document.createElement('div');
-                el.className = 'marker build';
-                el.id = "build" + properties.id;
-                el.style.display = 'none';
-                new mapboxgl.Marker(el).setLngLat(geometry.coordinates).setPopup(
-                    new mapboxgl.Popup({offset: 25}) // add popups
-                        .setHTML(`<h1><a href="${properties.url}" >${properties.title}</a></h1><hr/><p>${properties.address}</p><hr/><p>${properties.end_year}</p>`)
-                ).addTo(map);
-            }
-
-            {#            end set build#}
-
-            map.on('dblclick', function (e) {
-                const coord = [e.lngLat.lng, e.lngLat.lat];
-                const Mco = 28;
-                const Mno = 30;
-                const Mno2 = 46;
-                const N = 24.05526 * 1000;
-                var min = Infinity;
-                var s_id = 0;
-                var text = ''
-                {#var shkala = {%  static "img/shakal.png" %};#}
-                for (const {geometry, properties} of data.features) {
-                    var dist = Math.sqrt(Math.pow(geometry.coordinates[0] - coord[0], 2) + Math.pow(geometry.coordinates[1] - coord[1], 2));
-                    if (dist < min) {
-                        min = dist;
-                        s_id = 'popus' + properties.id;
-                        text = properties.title;
-                    }
-                }
-
-                $.ajax({
-                    url: `https://api.breezometer.com/air-quality/v2/current-conditions?lat=${e.lngLat.lat}&lon=${e.lngLat.lng}&key=${apiKey}&features=breezometer_aqi,pollutants_concentrations&lang=ru`,
-                    type: 'GET',
-                    success: function (data) {
-
-                        var pop = new mapboxgl.Popup()
-                            .setLngLat(coord)
-                            .setHTML(`<div style="width: 90%">
-                                        <div class="row">
-                                            <div class="col-8">
-                                                <h1>${data.data.indexes.baqi.aqi_display}%</h1>
-                                                <p>${data.data.indexes.baqi.dominant_pollutant}</p>
-                                                <p>${data.data.indexes.baqi.category}</p>
-                                                <p> CO: ${(data.data.pollutants.co.concentration.value * Mco / N).toFixed(4)} мг/м<sup>3</sup></p>
-                                                <p>NO2: ${(data.data.pollutants.no2.concentration.value * Mno2 / N).toFixed(4)} мг/м<sup>3</sup></p>
-                                                <p>PM10: ${(data.data.pollutants.pm10.concentration.value / 1000).toFixed(4)} мг/м<sup>3</sup></p>
-                                                <p>PM2.5: ${(data.data.pollutants.pm25.concentration.value / 1000).toFixed(4)} мг/м<sup>3</sup></p>
-                                                <p>Ближайшая станция: ${text}  <a class="btn btn-success" id="goto">Перейти к станции</a></p>
-                                            </div>
-                                            <div class="col-4" style="margin-top: 40%">
-                                                  <i style="color: ${data.data.indexes.baqi.color}; font-size: 4rem" class="iconsminds-eci-icon"></i>
-                                            </div>
-                                        </div>
-                                        <img src="static/img/shakal.png" width="100%">
-                                     </div>`)
-                            .addTo(map);
-                        $('#goto').click(function () {
-                            pop.remove();
-                            $('#' + s_id).trigger('click');
-                        });
-                    }
-                });
-
-            });
-
-
-            map.on('mouseenter', 'prom', () => {
-                map.getCanvas().style.cursor = 'pointer';
-            });
-
-            // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'prom', () => {
-                map.getCanvas().style.cursor = '';
-            });
-
-
-            {#  end set prom #}
-
-            {# weather#}
-
-            function addTempLayer() {
-                map.addLayer({
-                    "id": "temp",
-                    "type": "raster",
-                    "source": {
-                        "type": "raster",
-                        "tiles": [`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${apiWeather}`],
-                        "tileSize": 256
-                    },
-                    "minzoom": 0,
-                    "maxzoom": 22
-                });
-            }
-
-
-            function addPALayer() {
-                map.addLayer({
-                    "id": "pressure",
-                    "type": "raster",
-                    "source": {
-                        "type": "raster",
-                        "tiles": [`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${apiWeather}`],
-                        "tileSize": 256
-                    },
-                    "minzoom": 0,
-                    "maxzoom": 22
-                });
-            }
-
-            function addWNDLayer() {
-                map.addLayer({
-                    "id": "speed",
-                    "type": "raster",
-                    "source": {
-                        "type": "raster",
-                        "tiles": [`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${apiWeather}`],
-                        "tileSize": 256
-                    },
-                    "minzoom": 0,
-                    "maxzoom": 22
-                });
-            }
-
-            function addPRLayer() {
-                map.addLayer({
-                    "id": "precipitation",
-                    "type": "raster",
-                    "source": {
-                        "type": "raster",
-                        "tiles": [`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiWeather}`],
-                        "tileSize": 256
-                    },
-                    "minzoom": 0,
-                    "maxzoom": 22
-                });
-            }
-
-            function addHumLayer() {
-                map.addLayer({
-                    "id": "humidity",
-                    "type": "raster",
-                    "source": {
-                        "type": "raster",
-                        "tiles": [`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${apiWeather}`],
-                        "tileSize": 256
-                    },
-                    "minzoom": 0,
-                    "maxzoom": 22
-                });
-            }
-
-            {#  end weather #}
-
-
-
-
-            {#            quality #}
-
-            function addRasterSource() {
-                map.addSource("breezometer-tiles", {
-                    type: "raster",
-                    tiles: [
-                        `https://tiles.breezometer.com/v1/air-quality/breezometer-aqi/current-conditions/{z}/{x}/{y}.png?key=${apiKey}&breezometer_aqi_color=indiper`
-                    ],
-                    tileSize: 256,
-                    maxzoom: 12
-                });
-            }
-
-            function addRasterLayer() {
-                map.addLayer(
-                    {
-                        id: "breez",
-                        type: "raster",
-                        source: "breezometer-tiles",
-                        minzoom: 0,
-                        maxzoom: 22,
-                        paint: {
-                            "raster-opacity": 0.6
-                        }
-                    },
-                    "admin-1-boundary-bg"
-                );
-            }
-
-
-            {#  end quality  #}
-
-
-
-            {#            road    #}
-
-            function addRoadsSource() {
-                map.addSource("roads", {
-                    type: "vector",
-                    tiles: [
-                        `https://tiles.breezometer.com/v1/air-quality/traffic-pollution/current-conditions/{z}/{x}/{y}.pbf?key=${apiKey}`
-                    ],
-                    minzoom: 0,
-                    maxzoom: 10
-                });
-            }
-
-            function addRoadsLayer() {
-                map.addLayer(
-                    {
-                        id: "car",
-                        source: "roads",
-                        "source-layer": "brz-roads",
-                        type: "line",
-                        layout: {
-                            "line-cap": "round"
-                        },
-                        paint: {
-                            'line-color': [
-                                'interpolate',
-                                ['linear'],
-                                ['get', 'baqi'],
-                                20,
-                                '#723122',
-                                30,
-                                '#8B4225',
-                                40,
-                                '#A25626',
-                                50,
-                                '#B86B25',
-                                60,
-                                '#CA8323',
-                                70,
-                                '#DA9C20',
-                                80,
-                                '#E6B71E',
-                                90,
-                                '#EED322',
-                                100,
-                                '#F2F12D'
-                            ],
-                            'line-width': [
-                                'interpolate',
-                                ['linear'],
-                                ['get', 'road_width'],
-                                1,
-                                5,
-                                2,
-                                4,
-                                3,
-                                3,
-                                4,
-                                2,
-                                5,
-                                1,
-                            ]
-                        },
-                        minzoom: 3,
-                        maxzoom: 24
-                    },
-                    "admin-1-boundary-bg"
-                );
-            }
-
-
-            {#  end road  #}
-
-            {#             popul layer#}
-
-            function addPopulLayer() {
-                map.addLayer({
-                    "id": "popul",
-                    "type": "fill-extrusion",
-                    "source": {
-                        "type": "vector",
-                        "url": 'mapbox://blukky.0c79uqwb'
-                    },
-                    'source-layer': 'output_1k',
-                    "minzoom": 0,
-                    "maxzoom": 22,
-                    'paint': {
-                        'fill-extrusion-height': [
-                            "interpolate",
-                            ["linear"],
-                            ["get", "DN"],
-                            1,
-                            20,
-                            105749,
-                            500000,
-                            422995,
-                            1500000
-                        ],
-                        'fill-extrusion-color': [
-                            "interpolate",
-                            ["linear"],
-                            ["get", "DN"],
-                            1,
-                            "hsl(74, 70%, 96%)",
-                            500,
-                            "hsl(132, 35%, 73%)",
-                            1000,
-                            "hsl(167, 85%, 31%)",
-                            5000,
-                            "hsl(228, 66%, 25%)",
-                            10000,
-                            "hsl(256, 66%, 25%)",
-                            211498,
-                            "hsl(256, 56%, 8%)"
-                        ],
-                        'fill-extrusion-opacity': 0.6
-                    }
-
-                });
-            }
-
-            {#            end popul layer#}
-
-            $('.marker.station').click(function (e) {
-                console.log(e);
-                for (const {geometry, properties} of data.features) {
-                    if ('popus' + properties.id === $(this).attr('id')) {
-                        map.flyTo({
-                            center: geometry.coordinates,
-                            zoom: 18,
-                            pitch: 45
-                        });
-                    }
-                }
-            });
-
-            $('.marker.prom').click(function (e) {
-                console.log(e);
-                for (const {geometry, properties} of prom.features) {
-                    if ('prom' + properties.id === $(this).attr('id')) {
-                        map.flyTo({
-                            center: geometry.coordinates,
-                            zoom: 18,
-                            pitch: 45
-                        });
-                    }
-                }
-            });
-
-            $('.marker.build').click(function (e) {
-                console.log(e);
-                for (const {geometry, properties} of prom.features) {
-                    if ('build' + properties.id === $(this).attr('id')) {
-                        map.flyTo({
-                            center: geometry.coordinates,
-                            zoom: 18,
-                            pitch: 45
-                        });
-                    }
-                }
-            });
-        });
-
-    </script>
 {% endblock %}
 </body>
 
