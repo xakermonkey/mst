@@ -161,21 +161,21 @@
                             <i class="iconsminds-monitor-analytics"></i> Статистика
                         </a>
                     </li>
-                                        <li>
-                                            <a href="{% url 'predict' %}">
-                                                <i class="iconsminds-statistic"></i> Прогноз
-                                            </a>
-                                        </li>
+                    <li>
+                        <a href="{% url 'predict' %}">
+                            <i class="iconsminds-statistic"></i> Прогноз
+                        </a>
+                    </li>
                     <li>
                         <a href="{% url 'location' %}">
                             <i class="iconsminds-map2"></i> Блиц
                         </a>
                     </li>
-                                        <li>
-                                            <a href="{% url 'create_model' %}">
-                                                <i class="iconsminds-coding"></i> Матрица
-                                            </a>
-                                        </li>
+                    <li>
+                        <a href="{% url 'create_model' %}">
+                            <i class="iconsminds-coding"></i> Матрица
+                        </a>
+                    </li>
                     <li>
                         <a href="{% url 'docs' %}">
                             <i class="iconsminds-library"></i> Информация
@@ -198,7 +198,7 @@
         </div>
     </div>
 
-    <div id="map" style=" width: 1920px; height: 1080px;  max-width: 100%;"></div>
+    <div id="map" style=" width: 1920px; height: 980px;  max-width: 100%;"></div>
 
     <div class="modal fade modal-right" id="exampleModalRight" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalRight" aria-hidden="true">
@@ -218,12 +218,24 @@
                             <span>Автомобильный трафик</span>
                         </a>
 
-                        <a href="#" id="lines" class="col icon-menu-item">
+                        <a href="#" id="lines" class="col icon-menu-item activ">
                             <i class="iconsminds-equalizer d-block" style="font-size: 2rem"></i>
                             <span>Карта трубопровода</span>
                         </a>
                     </div>
+                    <div class="row" align="center">
+                        <a id="cam" href="#" class="col icon-menu-item activ">
+                            <i class="iconsminds-security-camera d-block" style="font-size: 2rem"></i>
+                            <span>Детекторы транспорта</span>
+                        </a>
+
+                        <a href="#" id="fvf" class="col icon-menu-item">
+                            <i class="iconsminds-car d-block" style="font-size: 2rem"></i>
+                            <span>Зафиксированные автомобили</span>
+                        </a>
+                    </div>
                 </div>
+
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary"
@@ -291,9 +303,11 @@
         function init() {
             // Создание карты.
             var lines = {{ lines|safe }};
-            var color =
-            {{ color|safe }}
+            var camera =
+            {{ data|safe }}
+            var fvf = {{ fvf|safe }}
             var bTraffic = true
+            var bLine = true
             var map = new ymaps.Map("map", {
                 // Координаты центра карты.
                 // Порядок по умолчанию: «широта, долгота».
@@ -307,41 +321,200 @@
             var actualProvider = new ymaps.traffic.provider.Actual({}, {infoLayerShown: true});
             // И затем добавим его на карту.
             actualProvider.setMap(map);
-
+            var line = new Array();
             for (let i = 0; i < lines.length; i++) {
+                line.push(new ymaps.GeoObject({
+                    // Описываем геометрию геообъекта.
+                    geometry: {
+                        // Тип геометрии - "Ломаная линия".
+                        type: "LineString",
+                        // Указываем координаты вершин ломаной.
+                        coordinates: lines[i].coord
+                    },
+                }, {
+                    // Задаем опции геообъекта.
+                    // Включаем возможность перетаскивания ломаной.
+                    draggable: false,
+                    // Цвет линии.
+                    strokeColor: lines[i].color,
+                    // Ширина линии.
+                    strokeWidth: 1,
+
+                }));
                 map.geoObjects
                     .add(
-                        new ymaps.GeoObject({
-                            // Описываем геометрию геообъекта.
-                            geometry: {
-                                // Тип геометрии - "Ломаная линия".
-                                type: "LineString",
-                                // Указываем координаты вершин ломаной.
-                                coordinates: lines[i]
-                            },
-                        }, {
-                            // Задаем опции геообъекта.
-                            // Включаем возможность перетаскивания ломаной.
-                            draggable: false,
-                            // Цвет линии.
-                            strokeColor: color[i],
-                            // Ширина линии.
-                            strokeWidth: 1
-                        })
+                        line[i]
                     );
             }
 
-            console.log(map.geoObjects)
+            function createHTML(data){
+                let text = `<div>
+                            <h3>${data.address}</h3>
+                            <hr/>
+                            <div style="overflow: paged-x" >
+                                <table class="data-table data-tables-pagination responsive nowrap"
+                                data-order="[[ 1, &quot;desc&quot; ]]">
+                                <thead>
+                                <tr>
+                                    <thНомер записи</th>
+                                    <th>Камера</th>
+                                    <th>Скорость</th>
+                                    <th>Дата</th>
+                                    <th>Полоса</th>
+                                </tr>
+                                </thead>
+                                <tbody>`
+                for (let i; i < data.tail.length; i++){
+                    text += `<tr>
+                                <td>
+                                    <p class="list-item-heading">${data.tail[i].id}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted">${data.tail[i].camera}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted">${data.tail[i].speed}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted">${data.tail[i].date}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted">${data.tail[i].lines}</p>
+                                </td>
+                            </tr>
+                    `
+                }
+                text += `</tbody>
+                     </table>
+                        </div>
+                        </div>`
+                return text
+            }
+
+            var fv = new Array();
+            var MyFvfContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div style="color: #FFFFFF; border-radius: 50%; font-weight: bold;">$[properties.iconContent]</div>'
+        )
+            for (let i = 0; i < fvf.length; i++) {
+                fv.push(new ymaps.Placemark(fvf[i].coord, {
+                    hintContent: fvf[i].address,
+                    balloonContent: createHTML(fvf[i]),
+                    iconContent:""
+                }, {
+                    // Опции.
+                    // Необходимо указать данный тип макета.
+                    iconLayout: 'default#imageWithContent',
+                    // Своё изображение иконки метки.
+                    iconImageHref: 'static/img/cam.png',
+                    // Размеры метки.
+                    iconImageSize: [35, 30],
+                    // Смещение левого верхнего угла иконки относительно
+                    // её "ножки" (точки привязки).
+                    iconImageOffset: [-24, -24],
+                    // Смещение слоя с содержимым относительно слоя с картинкой.
+                    iconContentOffset: [15, 15],
+                    // Макет содержимого.
+                    iconContentLayout: MyFvfContentLayout
+                }));
+                map.geoObjects
+                    .add(
+                        fv[i]
+                    );
+            }
+
+
+            var cam = new Array();
+            var MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div style="color: #FFFFFF; border-radius: 50%; font-weight: bold;">$[properties.iconContent]</div>'
+        )
+            for (let i = 0; i < camera.length; i++) {
+                cam.push(new ymaps.Placemark(camera[i].coord, {
+                    hintContent: camera[i].name,
+                    balloonContent: `<div>
+                                        <h3>${camera[i].name}</h3>
+                                        <hr/>
+                                        <p>Адрес камеры: ${camera[i].address}</p>
+                                        <p>Количетсво полос наблюденя: ${camera[i].lines}</p>
+                                        <p>Дата установки камеры: ${camera[i].date}</p>
+                                      </div>
+                                      `,
+                    iconContent:""
+                }, {
+                    // Опции.
+                    // Необходимо указать данный тип макета.
+                    iconLayout: 'default#imageWithContent',
+                    // Своё изображение иконки метки.
+                    iconImageHref: 'static/img/cam.png',
+                    // Размеры метки.
+                    iconImageSize: [35, 30],
+                    // Смещение левого верхнего угла иконки относительно
+                    // её "ножки" (точки привязки).
+                    iconImageOffset: [-24, -24],
+                    // Смещение слоя с содержимым относительно слоя с картинкой.
+                    iconContentOffset: [15, 15],
+                    // Макет содержимого.
+                    iconContentLayout: MyIconContentLayout,
+                    visible: false
+                }));
+                map.geoObjects
+                    .add(
+                        cam[i]
+                    );
+            }
+
             // Добавляем линии на карту.
 
             $('#car').click(function () {
-               bTraffic = !bTraffic;
-               if (bTraffic){
+                bTraffic = !bTraffic;
+                if (bTraffic) {
+                    $(this).removeClass('activ');
+                    actualProvider.setMap(map);
+                } else {
+                    actualProvider.setMap(null);
+                    $(this).addClass('activ');
+                }
+            });
+
+            $('#lines').click(function () {
+                bLine = !bLine;
+                if (bLine) {
+                    $(this).addClass('active')
+                    for (let i = 0; i < line.length; i++) {
+                        line[i].options.set({"visible": true})
+                    }
+                } else {
+                    $(this).removeClass('active')
+                    for (let i = 0; i < line.length; i++) {
+                        line[i].options.set({'visible':false})
+                    }
+                }
+            });
+
+            $('#cam').click(function () {
+               if ($(this).hasClass('activ')){
                    $(this).removeClass('activ');
-                   actualProvider.setMap(map);
+                   for (let i = 0; i< cam.length; i++){
+                       cam[i].options.set({'visible': false})
+                   }
                }else{
-                   actualProvider.setMap(null);
                    $(this).addClass('activ');
+                   for (let i = 0; i< cam.length; i++){
+                       cam[i].options.set({'visible': true})
+                   }
+               }
+            });
+
+            $('#fvf').click(function () {
+               if ($(this).hasClass('activ')){
+                   $(this).removeClass('activ');
+                   for (let i = 0; i< fv.length; i++){
+                       fv[i].options.set({'visible': false})
+                   }
+               }else{
+                   $(this).addClass('activ');
+                   for (let i = 0; i< cam.length; i++){
+                       cfvam[i].options.set({'visible': true})
+                   }
                }
             });
 

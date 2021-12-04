@@ -5,6 +5,7 @@ import random
 import networkx as nx
 import pandas as pd
 from pyvis.network import Network
+from datetime import datetime, timedelta
 
 
 def distance_square(x1, y1, x2, y2):
@@ -12,7 +13,7 @@ def distance_square(x1, y1, x2, y2):
 
 
 def draw_graph(G, name):
-    net = Network(notebook=True, width='100%', height='auto', bgcolor='#222222', font_color='white')
+    net = Network(notebook=True, width='100%', height='auto', bgcolor='#222222', font_color='black')
     # net.show_buttons(filter_=['physics', 'interaction', 'edges'])
     net.set_options("""
         var options = {
@@ -43,24 +44,60 @@ def draw_graph(G, name):
 
 
 def map(request):
+    fvf = list()
+    # for i in Fvf.objects.all().order_by('date')[:20]:
+    #     item = dict()
+    #     item['coord'] = [float(i.lat), float(i.lon)]
+    #     item['address'] = i.address
+    #     item['tail'] = list()
+    #     print(Fvf.objects.filter(address=i.address).order_by('date')[:5])
+    #     for j in Fvf.objects.filter(address=i.address).order_by('date')[:5]:
+    #         item['tail'].append({
+    #             'id': j.recid,
+    #             'camera': j.camera,
+    #             'speed': j.speed,
+    #             'date': j.date,
+    #             'lanes': j.lanes,
+    #         })
+    #     fvf.append(item)
+    #
+    # print('fvf')
+
+
+
+
     df = pd.read_excel('БД.xlsx')
     lines = list()
-    color = list()
     k = 1
     for i in range(1, df.shape[0]):
+        item = dict()
         if random.randint(0, 10) == 1:
             if df.loc[i]['Год'] < 2000:
-                color.append('#ff0020')
+                item['color'] = '#ff0020'
             elif df.loc[i]['Год'] < 2005:
-                color.append('#ffaa00')
+                item['color'] = '#ffaa00'
             else:
-                color.append('#00ff44')
-            lines.append([[df.loc[i - k]["Широта"], df.loc[i - k]["Долгота"]],
-                          [df.loc[i]["Широта"], df.loc[i]["Долгота"]]])
+                item['color'] = '#00ff44'
+            item['coord'] = [[df.loc[i - k]["Широта"], df.loc[i - k]["Долгота"]],
+                          [df.loc[i]["Широта"], df.loc[i]["Долгота"]]]
             k = 1
+            lines.append(item)
         else:
             k += 1
-    return render(request, "index.html", {'lines': lines, "color": color})
+
+    data = list()
+    for i in DetCoords.objects.all()[:50]:
+        item = dict()
+        item['name'] = i.name
+        item['address'] = i.address
+        item['lanes'] = int(i.lanes)
+        item['date'] = i.date
+        item['coord'] = [float(i.lat), float(i.lon)]
+        data.append(item)
+
+
+
+    return render(request, "index.html", {'lines': lines, 'data':data, 'fvf': fvf})
 
 
 def statistics(request):
@@ -92,14 +129,18 @@ def create_model(request):
     #             T[i][j] = k * float(Detectors.objects.filter(id=Q[i].devid).first().occ) * float(Detectors.objects.filter(id=D[j].devid).first().occ) / float(distance_square(Q[i].lon, Q[i].lat, D[j].lon, D[j].lat))
     # np.save('matrix.npy', T)
     T = np.load('matrix.npy')
-    G = nx.MultiDiGraph()
-    for i in range(len(Q)):
+    N = dict()
+    G = nx.Graph()
+    print(len(Q))
+    for i in range(len(Q)-30):
         G.add_node(Q[i].name)
-        for j in range(len(Q)):
+        N[Q[i].name] = T[i][:-30]
+        for j in range(len(Q)-30):
             if i != j:
                 G.add_edge(Q[i].name, Q[j].name, value=T[i][j], label=str(round(T[i][j], 2)))
+
     draw_graph(G, 'корреспонденций')
-    return render(request, "create_model.html")
+    return render(request, "create_model.html", {'N': N, 'Q':Q[:-30], 'range': range(len(Q)-30)})
 
 
 def docs(request):

@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load poll_extras %}
 
 {% block link %}
     <link rel="stylesheet" href="{% static 'font/iconsmind-s/css/iconsminds.css' %}" />
@@ -30,6 +31,9 @@
             {#border: 1px solid lightgray;#}
             position: relative;
             float: left;
+        }
+        .tit {
+            cursor: pointer;
         }
 </style>
     <div class="menu">
@@ -96,7 +100,40 @@
 
             <div id = "mynetwork"></div>
 
+            <div class="row mb-4">
+                <div class="col-12 data-tables-hide-filter">
+                    <div class="card">
+                        <div class="card-body">
 
+                            <table class="data-table data-tables-pagination responsive nowrap"
+                                data-order="[[ 1, &quot;desc&quot; ]]">
+                                <thead>
+                                <tr>
+                                    <th class=""></th>
+                                    {% for i in Q %}
+                                    <th class="tit" title="{{ i.name }}">{{ i.name|hide }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for k,v in N.items %}
+                                    <tr>
+                                        <td title="{{ k }}">
+                                            <p class="list-item-heading">{{ k|hide }}</p>
+                                        </td>
+                                    {% for j in v %}
+                                        <td>
+                                            <p class="text-muted">{% if j == 0 %}-{% else %}{{ j|to_int }}{% endif %}</p>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
 
     </main>
@@ -110,9 +147,7 @@
         <script src="{% static 'js/vendor/bootstrap-tagsinput.min.js' %}"></script>
         <script src="{% static 'js/vendor/jquery.smartWizard.min.js' %}"></script>
         <script src="{% static 'js/vendor/progressbar.min.js' %}"></script>
-        <script>
-            let timer = setTimeout(() => {  $("#sw-btn-group").before(' <h4 class="mr-2 mt-1">Не знаете что выбрать? Нажмите далее для выбора по умолчанию</h4>') }, 5000);
-        </script>
+        <script src="{% static 'js/vendor/datatables.min.js' %}"></script>
         <script src="{% static 'js/vendor/jquery.validate/jquery.validate.min.js' %}"></script>
         <script src="{% static 'js/vendor/jquery.validate/additional-methods.min.js' %}"></script>
         <script src="{% static 'js/startrek.script.js' %}"></script>

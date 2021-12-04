@@ -18,4 +18,11 @@ def int_temp(value):
     return int(value)+30
 
 
+@register.filter(name='hide')
+def hide(value):
+    if len(value) > 10:
+        return value[:10] + '...'
+    else:
+        return value
+
 
