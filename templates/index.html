@@ -386,7 +386,7 @@
     <script src="{% static 'js/startrek.script.js' %}"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
     <script src="{% static 'js/docs.js' %}"></script>
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=0f5c46ab-d8c9-4489-b1cb-09582c08719c&modules=traffic&lang=ru_RU"
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=103634bb-ef89-4898-ad93-cbb9352ed219&lang=ru_RU"
             type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -395,7 +395,8 @@
 
             function init() {
                 // Создание карты.
-                var myMap = new ymaps.Map("map", {
+
+                var map = new ymaps.Map("map", {
                     // Координаты центра карты.
                     // Порядок по умолчанию: «широта, долгота».
                     // Чтобы не определять координаты центра карты вручную,
@@ -405,8 +406,30 @@
                     // от 0 (весь мир) до 19.
                     zoom: 7
                 });
-            }
+                var actualProvider = new ymaps.traffic.provider.Actual({}, {infoLayerShown: true});
+                // И затем добавим его на карту.
+                actualProvider.setMap(map);
+                var myPolyline = new ymaps.Polyline(
+                    {{ lines|safe }}, {
+                    // Описываем свойства геообъекта.
+                    // Содержимое балуна.
+                    balloonContent: ""
+                }, {
+                    // Задаем опции геообъекта.
+                    // Отключаем кнопку закрытия балуна.
+                    balloonCloseButton: false,
+                    // Цвет линии.
+                    strokeColor: "#00365a",
+                    // Ширина линии.
+                    strokeWidth: 1,
+                    // Коэффициент прозрачности.
+                    strokeOpacity: 0.5
+                });
 
+                // Добавляем линии на карту.
+                map.geoObjects
+                    .add(myPolyline);
+            }
         });
     </script>
 
