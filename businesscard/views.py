@@ -64,7 +64,12 @@ def map(request):
 
 
 def statistics(request):
-    return render(request, "statistics.html")
+    data = list()
+
+    for i in Detectors.objects.all()[:100]:
+        data.append([DetCoords.objects.filter(devid=i.id).first().name, DetCoords.objects.filter(devid=i.id).first().address, i.completeness, i.speed, i.occ, i.utilisation, i.volume])
+
+    return render(request, "statistics.html", {'data':data})
 
 
 def predict(request):

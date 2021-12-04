@@ -24,8 +24,9 @@
         <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datepicker3.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/vendor/component-custom-switch.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
-    {% endblock %}
 
+
+    {% endblock %}
     {#    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/png">#}
 
     <style type="text/css">
@@ -150,31 +151,31 @@
             <div class="scroll">
                 <ul class="list-unstyled">
                     <li class="active">
-                        <a href="{% url 'map' %}">{# #dashboard #}
+                        <a href="{% url 'map' %}">
                             <i class="simple-icon-map"></i>
                             <span>Карта контроля</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'statistics' %}">{# #layouts#}
+                        <a href="{% url 'statistics' %}">
                             <i class="iconsminds-monitor-analytics"></i> Статистика
                         </a>
                     </li>
-                    {#                    <li>#}
-                    {#                        <a href="{% url 'predict' %}">{# #applications#}
-                    {#                            <i class="iconsminds-statistic"></i> Прогноз#}
-                    {#                        </a>#}
-                    {#                    </li>#}
+                                        <li>
+                                            <a href="{% url 'predict' %}">
+                                                <i class="iconsminds-statistic"></i> Прогноз
+                                            </a>
+                                        </li>
                     <li>
-                        <a href="{% url 'location' %}">{# #ui#}
+                        <a href="{% url 'location' %}">
                             <i class="iconsminds-map2"></i> Блиц
                         </a>
                     </li>
-                    {#                    <li>#}
-                    {#                        <a href="{% url 'create_model' %}">{# #menu#}
-                    {#                            <i class="iconsminds-coding"></i> Создание модели#}
-                    {#                        </a>#}
-                    {#                    </li>#}
+                                        <li>
+                                            <a href="{% url 'create_model' %}">
+                                                <i class="iconsminds-coding"></i> Матрица
+                                            </a>
+                                        </li>
                     <li>
                         <a href="{% url 'docs' %}">
                             <i class="iconsminds-library"></i> Информация
@@ -346,6 +347,7 @@
 
         }
     </script>
+
 {% endblock %}
 </body>
 

@@ -45,7 +45,7 @@
                     </li>
                     <li>
                         <a href="{% url 'create_model' %}">{# #menu#}
-                            <i class="iconsminds-coding"></i> Создание модели
+                            <i class="iconsminds-coding"></i> Матрица
                         </a>
                     </li>
                     <li>
@@ -58,83 +58,80 @@
         </div>
     </div>
 
-    <div class="row" id="veshestva" style="z-index: 1030; position: absolute; margin-top: 120px; left: 10%; right: 10%">
-        <div class="col mx-auto glide__slide">
-            <a href="#" class="card">
-                <div class="card-body text-center">
-                    {#                    <i class="iconsminds-file-zip"></i>#}
-                    <p class="lead text-center">CO</p>
-                    <p id="co" class="card-text mb-0">0000</p>
+<main>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Прогноз состояния дорожной ситуации</h1>
+                    <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                        <ol class="breadcrumb pt-0">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'map' %}">Карта контроля</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'predict' %}">Прогноз</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'location' %}">Блиц</a>
+                            </li>
+                        </ol>
+                    </nav>
+                    <div class="separator mb-5"></div>
                 </div>
-            </a>
-        </div>
-        <div class="col mx-auto glide__slide">
-            <a href="#" class="card">
-                <div class="card-body text-center">
-                    {#                    <i class="iconsminds-file-zip"></i>#}
-                    <p class="lead text-center">NO</p>
-                    <p id="no" class="card-text mb-0">0000</p>
-                </div>
-            </a>
-        </div>
-        <div class="col mx-auto glide__slide">
-            <a href="#" class="card">
-                <div class="card-body text-center">
-                    {#                    <i class="iconsminds-file-zip"></i>#}
-                    <p class="lead text-center">NO2</p>
-                    <p id="no2" class="card-text mb-0">0000</p>
-                </div>
-            </a>
-        </div>
-        <div class="col mx-auto glide__slide">
-            <a href="#" class="card">
-                <div class="card-body text-center">
-                    {#                    <i class="iconsminds-file-zip"></i>#}
-                    <p class="lead text-center">PM10</p>
-                    <p id="pm10" class="card-text mb-0">0000</p>
-                </div>
-            </a>
-        </div>
-        <div class="col mx-auto glide__slide">
-            <a href="#" class="card">
-                <div class="card-body text-center">
-                    {#                    <i class="iconsminds-file-zip"></i>#}
-                    <p class="lead text-center">PM2.5</p>
-                    <p id="pm25" class="card-text mb-0">0000</p>
-                </div>
-            </a>
-        </div>
-    </div>
+            </div>
 
-    {% csrf_token %}
-    <div id="map" style="max-width: 100%; "></div>
+            <div class="row">
+                <div class="col-12 col-lg-6 mb-5">
+                    <h5 class="mb-5">Визуализация нейронной сети</h5>
 
-    <div class="b-page b-page_type_maps b-page_lang_ru">
-        <div class="weather-maps_timeline_mini ">
-            <div class="weather-maps__loyier-exsist weather-maps__timeline">
-                <div class="timeline timeline_js_inited">
-                    <div class="timeline__current"></div>
-                    <div class="timeline__list">
-                        <div class="timeline__arrow timeline__arrow_direction_left"></div>
-                        <div class=" swiper-container swiper-timeline swiper-container-horizontal swiper-container-free-mode swiper-container-android"
-                             style="">
-                            <div class="animate swiper-wrapper">
-
-                                {% for i in timeline_id %}
-                                    <div class="timeline-item timeline-item_type_wind swiper-slide">
-                                        <div class="timeline-item__time" id="{{ i.1 }}">{{ i.0 }}</div>
-                                    </div>
-                                {% endfor %}
-
-                            </div>
-                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <img id="img" src="" width="100%">
                         </div>
-                        <div class="timeline__arrow timeline__arrow_direction_right"></div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <h5 class="mb-5">Оценка дорожной ситуации</h5>
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-4">Таймлайн предсказания</h5>
+                            <form id="exampleForm" class="tooltip-label-right" novalidate>
+                                <div class="form-group position-relative error-l-50">
+                                    <label>Текущее время + </label>
+                                    <select id="selector" class="custom-select" required>
+                                        <option value=""></option>
+                                        <option value="1">1 час</option>
+                                        <option value="2">2 часа</option>
+                                        <option value="3">3 часа</option>
+                                        <option value="4">4 часа</option>
+                                        <option value="4">5 часов</option>
+                                        <option value="6">6 часов</option>
+                                    </select>
+                                </div>
+                                <div class="form-group position-relative error-l-50">
+                                    <h5 class="mb-4">Состояние:</h5>
+                                    <h5 id="obsh" class="mb-4">Загруженность трафика оценивается в </h5>
+                                </div>
+                                <div class="form-group position-relative error-l-50">
+                                    <h5 class="mb-4">Состояние по округам:</h5>
+                                    <h5 id="szao" class="mb-4">СЗАО: </h5>
+                                    <h5 id="sao" class="mb-4">САО: </h5>
+                                    <h5 id="vao" class="mb-4">ВАО: </h5>
+                                    <h5 id="svao" class="mb-4">СВАО: </h5>
+                                    <h5 id="uvau" class="mb-4">ЮВАУ: </h5>
+                                    <h5 id="cao" class="mb-4">ЦАО: </h5>
+                                    <h5 id="zao" class="mb-4">ЗАО: </h5>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
 {% endblock %}
 
@@ -158,26 +155,206 @@
     <script src="{% static 'js/vendor/Sortable.js' %}"></script>
     <script src="{% static 'js/vendor/mousetrap.min.js' %}"></script>
     <script src="{% static 'js/startrek.script.js' %}"></script>
-    <script src="{% static 'js/dore.script.js' %}"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
 
-    {# MAPBOX #}
-    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
-
     <script type="text/javascript">
-        var tower =
-        {{ tower|safe }}
-    </script>
-    <script src="{% static 'js/mymapbox.js' %}"></script>
+        $(document).ready(function () {
+            $('#selector').change(function () {
+                setTimeout(() => { if (this.value == 1) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
 
-    {#    <script>#}
-    {#    $(document).ready(function () {#}
-    {#            let document_ht = window.innerWidth;#}
-    {#            let map_ht = document_ht - 100 - 48;#}
-    {#            $('#map').css('height', map_ht);#}
-    {#            $('#veshestva').css('margin-top', 120);#}
-    {#        });#}
-    {#    </script>#}
+                    $('#img').attr('src', '{% static 'js/predict/4.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                } }, 1000);
+                setTimeout(() => { if (this.value == 2) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
+
+                    $('#img').attr('src', '{% static 'js/predict/5.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                }}, 2000);
+                setTimeout(() => { if (this.value == 3) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
+
+                    $('#img').attr('src', '{% static 'js/predict/6.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                }}, 4000);
+                setTimeout(() => { if (this.value == 4) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
+
+                    $('#img').attr('src', '{% static 'js/predict/7.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                }}, 8000);
+                setTimeout(() => { if (this.value == 5) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
+
+                    $('#img').attr('src', '{% static 'js/predict/4.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                }}, 16000);
+                setTimeout(() => { if (this.value == 6) {
+                    function getRandomInt(min, max) {
+                        return Math.floor(Math.random() * (max - min)) + min;
+                    }
+                    let szao = getRandomInt(1, 10);
+                    let sao = getRandomInt(1, 10);
+                    let vao = getRandomInt(1, 10);
+                    let svao = getRandomInt(1, 10);
+                    let cao = getRandomInt(1, 10);
+                    let uvau = getRandomInt(1, 10);
+                    let zao = getRandomInt(1, 10);
+                    let obsh = ((szao + sao + vao + svao + cao + uvau + zao) / 7).toFixed(1)
+                    $('#img').attr('src', '')
+                    $('#obsh').text('Загруженность трафика оценивается в ')
+                    $('#szao').text('СЗАО: ')
+                    $('#sao').text('САО: ')
+                    $('#vao').text('ВАО: ')
+                    $('#svao').text('СВАО: ')
+                    $('#cao').text('ЮВАУ: ')
+                    $('#uvau').text('ЦАО: ')
+                    $('#zao').text('ЗАО: ')
+
+                    $('#img').attr('src', '{% static 'js/predict/5.gif' %}')
+                    $('#obsh').text($('#obsh').text() + obsh + ' бал.')
+                    $('#szao').text($('#szao').text() + szao + ' бал.')
+                    $('#sao').text($('#sao').text() + sao + ' бал.')
+                    $('#vao').text($('#vao').text() + vao + ' бал.')
+                    $('#svao').text($('#svao').text() + svao + ' бал.')
+                    $('#cao').text($('#cao').text() + cao + ' бал.')
+                    $('#uvau').text($('#uvau').text() + uvau + ' бал.')
+                    $('#zao').text($('#zao').text() + zao + ' бал.')
+                }}, 32000);
+            });
+        });
+
+    </script>
 
 {% endblock %}
