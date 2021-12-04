@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import *
 import numpy as np
-import math
+import random
 import networkx as nx
 import pandas as pd
 from pyvis.network import Network
@@ -45,11 +45,22 @@ def draw_graph(G, name):
 def map(request):
     df = pd.read_excel('БД.xlsx')
     lines = list()
-    for i in range(df.shape[0]):
-        lines.append([df.loc[i]["Широта"], df.loc[i]["Долгота"]])
-    print(lines)
-
-    return render(request, "index.html", {'lines': lines})
+    color = list()
+    k = 1
+    for i in range(1, df.shape[0]):
+        if random.randint(0, 10) == 1:
+            if df.loc[i]['Год'] < 2000:
+                color.append('#ff0020')
+            elif df.loc[i]['Год'] < 2005:
+                color.append('#ffaa00')
+            else:
+                color.append('#00ff44')
+            lines.append([[df.loc[i - k]["Широта"], df.loc[i - k]["Долгота"]],
+                          [df.loc[i]["Широта"], df.loc[i]["Долгота"]]])
+            k = 1
+        else:
+            k += 1
+    return render(request, "index.html", {'lines': lines, "color": color})
 
 
 def statistics(request):

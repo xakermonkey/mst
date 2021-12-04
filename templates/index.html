@@ -24,9 +24,8 @@
         <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datepicker3.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/vendor/component-custom-switch.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
-
-
     {% endblock %}
+
     {#    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/png">#}
 
     <style type="text/css">
@@ -189,7 +188,7 @@
     <div class="row" id="veshestva"
          style="z-index: 1030; position: absolute; margin-top: 120px; left: 10%; right: 10%; display: none">
         <div class="alert alert-danger rounded" role="alert">
-            <strong>Внимание!</strong> Превышен показатель CO вблизи станции Академика Анохина.
+            <strong>Внимание!</strong> Авария на ул. Пушкинская.
             <sup>
                 <button id="close_alert" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -198,7 +197,7 @@
         </div>
     </div>
 
-    <div id="map" style="max-width: 100%;"></div>
+    <div id="map" style=" width: 1920px; height: 1080px;  max-width: 100%;"></div>
 
     <div class="modal fade modal-right" id="exampleModalRight" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalRight" aria-hidden="true">
@@ -212,119 +211,16 @@
                 </div>
 
                 <div class="modal-body">
-
-                    <div id="list" class="row" align="center">
-                        <a id="station" href="#" class="col icon-menu-item activ ">
-                            <i class="iconsminds-berlin-tower d-block" style="font-size: 2rem"></i>
-                            <span>Метеостанции</span>
-                        </a>
-
-                        <a id="breez" href="#" class="col icon-menu-item activ">
-                            <i class="iconsminds-windy d-block" style="font-size: 2rem"></i>
-                            <span>Качество воздуха</span>
-                        </a>
-                    </div>
                     <div class="row" align="center">
                         <a id="car" href="#" class="col icon-menu-item activ">
                             <i class="iconsminds-traffic-light d-block" style="font-size: 2rem"></i>
                             <span>Автомобильный трафик</span>
                         </a>
 
-                        <a href="#" id="popul" class="col icon-menu-item">
-                            <i class="iconsminds-mens d-block" style="font-size: 2rem"></i>
-                            <span>Плотность населения</span>
+                        <a href="#" id="lines" class="col icon-menu-item">
+                            <i class="iconsminds-equalizer d-block" style="font-size: 2rem"></i>
+                            <span>Карта трубопровода</span>
                         </a>
-                    </div>
-                    <div class="row" align="center">
-                        <a id="build" href="#" class="col icon-menu-item">
-                            <i class="iconsminds-building d-block" style="font-size: 2rem"></i>
-                            <span>Строительство</span>
-                        </a>
-
-                        <a href="#" id="rub" class="col icon-menu-item">
-                            <i class="iconsminds-recycling-2 d-block" style="font-size: 2rem"></i>
-                            <span>Полигон ТБО</span>
-                        </a>
-                    </div>
-                    <div class="row" align="center">
-                        <a id="prom" href="#" class="col icon-menu-ite">
-                            <i class="iconsminds-power-station d-block" style="font-size: 2rem"></i>
-                            <span>Промышленность</span>
-                        </a>
-
-                        <a href="#" id="weather-btn" class="col icon-menu-item">
-                            <i class="iconsminds-cloud-weather d-block" style="font-size: 2rem"></i>
-                            <span>Погода</span>
-                        </a>
-                    </div>
-
-                    <div class="form-group mt-2" id="veva">
-                        <label class="mt-4">Вещества в воздухе</label>
-                        <table class="table table-hover">
-                            <tbody>
-                            <tr class="odd shadow-lg vev" id="co">
-                                <th scope="row"><span class="badge badge-secondary mr-2">CO</span></th>
-                                <td colspan="2">Оксид углерода</td>
-                            </tr>
-                            <tr class="even vev" id="no">
-                                <th scope="row"><span class="badge badge-secondary mr-2">NO</span></th>
-                                <td colspan="2">Оксид азота (II)</td>
-                            </tr>
-                            <tr class="odd vev" id="no2">
-                                <th scope="row"><span class="badge badge-secondary mr-2">NO2</span></th>
-                                <td colspan="2">Оксид азота (IV)</td>
-                            </tr>
-                            <tr class="even vev" id="pm10">
-                                <th scope="row"><span class="badge badge-secondary mr-2">PM10</span></th>
-                                <td colspan="2">PM10</td>
-                            </tr>
-                            <tr class="even vev" id="pm25">
-                                <th scope="row"><span class="badge badge-secondary mr-2">PM2.5</span></th>
-                                <td colspan="2">PM2.5</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="form-group mt-2" style="display: none" id="wthr">
-                        <label>Погода по</label>
-                        <table class="table table-hover">
-                            <tbody>
-                            <tr role="row" class="odd">
-                                <td>
-                                    <p id="temp" class="list-item-heading filter p-1"><span
-                                            class="badge badge-secondary mr-2">temp</span>Температура</p>
-                                </td>
-                            </tr>
-                            <tr role="row" class="even">
-                                <td>
-                                    <p id="pressure" class="list-item-heading filter p-1"><span
-                                            class="badge badge-secondary mr-2">pressure</span>Давление</p>
-                                </td>
-                            </tr>
-                            <tr role="row" class="odd">
-                                <td>
-                                    <p id="humidity" class="list-item-heading p-1 filter"><span
-                                            class="badge badge-secondary mr-2">humidity</span>Влажность</p>
-
-                                </td>
-                            </tr>
-                            <tr role="row" class="even">
-                                <td>
-                                    <p id="precipitation" class="list-item-heading filter p-1"><span
-                                            class="badge badge-secondary mr-2">precipitation</span>Осадки</p>
-
-                                </td>
-                            </tr>
-                            <tr role="row" class="even">
-                                <td>
-                                    <p id="speed" class="list-item-heading filter p-1"><span
-                                            class="badge badge-secondary mr-2">wind</span>Ветер</p>
-
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 
@@ -389,50 +285,67 @@
     <script src="https://api-maps.yandex.ru/2.1/?apikey=103634bb-ef89-4898-ad93-cbb9352ed219&lang=ru_RU"
             type="text/javascript"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
+        ymaps.ready(init);
 
-            ymaps.ready(init);
+        function init() {
+            // Создание карты.
+            var lines = {{ lines|safe }};
+            var color =
+            {{ color|safe }}
+            var bTraffic = true
+            var map = new ymaps.Map("map", {
+                // Координаты центра карты.
+                // Порядок по умолчанию: «широта, долгота».
+                // Чтобы не определять координаты центра карты вручную,
+                // воспользуйтесь инструментом Определение координат.
+                center: [55.76, 37.64],
+                // Уровень масштабирования. Допустимые значения:
+                // от 0 (весь мир) до 19.
+                zoom: 12
+            });
+            var actualProvider = new ymaps.traffic.provider.Actual({}, {infoLayerShown: true});
+            // И затем добавим его на карту.
+            actualProvider.setMap(map);
 
-            function init() {
-                // Создание карты.
-
-                var map = new ymaps.Map("map", {
-                    // Координаты центра карты.
-                    // Порядок по умолчанию: «широта, долгота».
-                    // Чтобы не определять координаты центра карты вручную,
-                    // воспользуйтесь инструментом Определение координат.
-                    center: [55.76, 37.64],
-                    // Уровень масштабирования. Допустимые значения:
-                    // от 0 (весь мир) до 19.
-                    zoom: 7
-                });
-                var actualProvider = new ymaps.traffic.provider.Actual({}, {infoLayerShown: true});
-                // И затем добавим его на карту.
-                actualProvider.setMap(map);
-                var myPolyline = new ymaps.Polyline(
-                    {{ lines|safe }}, {
-                    // Описываем свойства геообъекта.
-                    // Содержимое балуна.
-                    balloonContent: ""
-                }, {
-                    // Задаем опции геообъекта.
-                    // Отключаем кнопку закрытия балуна.
-                    balloonCloseButton: false,
-                    // Цвет линии.
-                    strokeColor: "#00365a",
-                    // Ширина линии.
-                    strokeWidth: 1,
-                    // Коэффициент прозрачности.
-                    strokeOpacity: 0.5
-                });
-
-                // Добавляем линии на карту.
+            for (let i = 0; i < lines.length; i++) {
                 map.geoObjects
-                    .add(myPolyline);
+                    .add(
+                        new ymaps.GeoObject({
+                            // Описываем геометрию геообъекта.
+                            geometry: {
+                                // Тип геометрии - "Ломаная линия".
+                                type: "LineString",
+                                // Указываем координаты вершин ломаной.
+                                coordinates: lines[i]
+                            },
+                        }, {
+                            // Задаем опции геообъекта.
+                            // Включаем возможность перетаскивания ломаной.
+                            draggable: false,
+                            // Цвет линии.
+                            strokeColor: color[i],
+                            // Ширина линии.
+                            strokeWidth: 1
+                        })
+                    );
             }
-        });
-    </script>
 
+            console.log(map.geoObjects)
+            // Добавляем линии на карту.
+
+            $('#car').click(function () {
+               bTraffic = !bTraffic;
+               if (bTraffic){
+                   $(this).removeClass('activ');
+                   actualProvider.setMap(map);
+               }else{
+                   actualProvider.setMap(null);
+                   $(this).addClass('activ');
+               }
+            });
+
+        }
+    </script>
 {% endblock %}
 </body>
 
