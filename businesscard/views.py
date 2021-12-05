@@ -45,25 +45,20 @@ def draw_graph(G, name):
 
 def map(request):
     fvf = list()
-    # for i in Fvf.objects.all().order_by('date')[:20]:
-    #     item = dict()
-    #     item['coord'] = [float(i.lat), float(i.lon)]
-    #     item['address'] = i.address
-    #     item['tail'] = list()
-    #     print(Fvf.objects.filter(address=i.address).order_by('date')[:5])
-    #     for j in Fvf.objects.filter(address=i.address).order_by('date')[:5]:
-    #         item['tail'].append({
-    #             'id': j.recid,
-    #             'camera': j.camera,
-    #             'speed': j.speed,
-    #             'date': j.date,
-    #             'lanes': j.lanes,
-    #         })
-    #     fvf.append(item)
-    #
-    # print('fvf')
-
-
+    for i in Fvf.objects.all()[:10]:
+        item = dict()
+        item['coord'] = [float(i.lat), float(i.lon)]
+        item['address'] = i.address
+        item['tail'] = list()
+        for j in Fvf.objects.all()[:5]:
+            item['tail'].append({
+                'id': int(j.recid),
+                'camera': j.camera,
+                'speed': float(j.speed) if j.speed else 0,
+                'date': j.date.isoformat(),
+                'lanes': int(j.lanes) if j.lanes else 0,
+            })
+        fvf.append(item)
 
 
     df = pd.read_excel('БД.xlsx')
@@ -79,7 +74,7 @@ def map(request):
             else:
                 item['color'] = '#00ff44'
             item['coord'] = [[df.loc[i - k]["Широта"], df.loc[i - k]["Долгота"]],
-                          [df.loc[i]["Широта"], df.loc[i]["Долгота"]]]
+                             [df.loc[i]["Широта"], df.loc[i]["Долгота"]]]
             k = 1
             lines.append(item)
         else:
@@ -95,18 +90,18 @@ def map(request):
         item['coord'] = [float(i.lat), float(i.lon)]
         data.append(item)
 
-
-
-    return render(request, "index.html", {'lines': lines, 'data':data, 'fvf': fvf})
+    return render(request, "index.html", {'lines': lines, 'data': data, 'fvf': fvf})
 
 
 def statistics(request):
     data = list()
 
     for i in Detectors.objects.all()[:100]:
-        data.append([DetCoords.objects.filter(devid=i.id).first().name, DetCoords.objects.filter(devid=i.id).first().address, i.completeness, i.speed, i.occ, i.utilisation, i.volume])
+        data.append(
+            [DetCoords.objects.filter(devid=i.id).first().name, DetCoords.objects.filter(devid=i.id).first().address,
+             i.completeness, i.speed, i.occ, i.utilisation, i.volume])
 
-    return render(request, "statistics.html", {'data':data})
+    return render(request, "statistics.html", {'data': data})
 
 
 def predict(request):
@@ -132,15 +127,15 @@ def create_model(request):
     N = dict()
     G = nx.Graph()
     print(len(Q))
-    for i in range(len(Q)-30):
+    for i in range(len(Q) - 30):
         G.add_node(Q[i].name)
         N[Q[i].name] = T[i][:-30]
-        for j in range(len(Q)-30):
+        for j in range(len(Q) - 30):
             if i != j:
                 G.add_edge(Q[i].name, Q[j].name, value=T[i][j], label=str(round(T[i][j], 2)))
 
     draw_graph(G, 'корреспонденций')
-    return render(request, "create_model.html", {'N': N, 'Q':Q[:-30], 'range': range(len(Q)-30)})
+    return render(request, "create_model.html", {'N': N, 'Q': Q[:-30], 'range': range(len(Q) - 30)})
 
 
 def docs(request):

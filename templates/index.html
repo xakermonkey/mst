@@ -117,6 +117,9 @@
             <button type="button" class="btn btn-secondary" data-toggle="modal" data-backdrop="static"
                     data-target="#exampleModalRight">Слои и фильтры
             </button>
+            <a href="{% static 'report05122021.docx' %}" download target="_blank" style="margin-left: 1%" type="button" class="btn btn-secondary" data-toggle="" data-backdrop=""
+                    data-target="">Экспорт отчета
+            </a>
         {% endblock %}
     </div>
 
@@ -218,7 +221,7 @@
                             <span>Автомобильный трафик</span>
                         </a>
 
-                        <a href="#" id="lines" class="col icon-menu-item activ">
+                        <a href="#" id="lines" class="col icon-menu-item">
                             <i class="iconsminds-equalizer d-block" style="font-size: 2rem"></i>
                             <span>Карта трубопровода</span>
                         </a>
@@ -283,7 +286,6 @@
     <script src="{% static 'js/vendor/chartjs-plugin-datalabels.js' %}"></script>
     <script src="{% static 'js/vendor/moment.min.js' %}"></script>
     <script src="{% static 'js/vendor/fullcalendar.min.js' %}"></script>
-    <script src="{% static 'js/vendor/datatables.min.js' %}"></script>
     <script src="{% static 'js/vendor/perfect-scrollbar.min.js' %}"></script>
     <script src="{% static 'js/vendor/progressbar.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery.barrating.min.js' %}"></script>
@@ -339,6 +341,7 @@
                     strokeColor: lines[i].color,
                     // Ширина линии.
                     strokeWidth: 1,
+                    visible: false
 
                 }));
                 map.geoObjects
@@ -348,6 +351,7 @@
             }
 
             function createHTML(data){
+                console.log(data)
                 let text = `<div>
                             <h3>${data.address}</h3>
                             <hr/>
@@ -356,7 +360,7 @@
                                 data-order="[[ 1, &quot;desc&quot; ]]">
                                 <thead>
                                 <tr>
-                                    <thНомер записи</th>
+                                    <th>Номер записи</th>
                                     <th>Камера</th>
                                     <th>Скорость</th>
                                     <th>Дата</th>
@@ -364,22 +368,22 @@
                                 </tr>
                                 </thead>
                                 <tbody>`
-                for (let i; i < data.tail.length; i++){
+                for (let i = 0; i < data.tail.length; i++){
                     text += `<tr>
                                 <td>
-                                    <p class="list-item-heading">${data.tail[i].id}</p>
+                                    <p style="font-size: 12px" class="list-item-heading">${data.tail[i].id}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted">${data.tail[i].camera}</p>
+                                    <p style="font-size: 12px" class="text-muted">${data.tail[i].camera}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted">${data.tail[i].speed}</p>
+                                    <p style="font-size: 12px" class="text-muted">${data.tail[i].speed}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted">${data.tail[i].date}</p>
+                                    <p style="font-size: 12px" class="text-muted">${data.tail[i].date.split('T')[0]} ${data.tail[i].date.split('T')[1]}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted">${data.tail[i].lines}</p>
+                                    <p style="font-size: 12px" class="text-muted">${data.tail[i].lines}</p>
                                 </td>
                             </tr>
                     `
@@ -405,7 +409,7 @@
                     // Необходимо указать данный тип макета.
                     iconLayout: 'default#imageWithContent',
                     // Своё изображение иконки метки.
-                    iconImageHref: 'static/img/cam.png',
+                    iconImageHref: 'static/img/fvf.png',
                     // Размеры метки.
                     iconImageSize: [35, 30],
                     // Смещение левого верхнего угла иконки относительно
@@ -414,7 +418,8 @@
                     // Смещение слоя с содержимым относительно слоя с картинкой.
                     iconContentOffset: [15, 15],
                     // Макет содержимого.
-                    iconContentLayout: MyFvfContentLayout
+                    iconContentLayout: MyFvfContentLayout,
+                    visible: false
                 }));
                 map.geoObjects
                     .add(
@@ -453,8 +458,7 @@
                     // Смещение слоя с содержимым относительно слоя с картинкой.
                     iconContentOffset: [15, 15],
                     // Макет содержимого.
-                    iconContentLayout: MyIconContentLayout,
-                    visible: false
+                    iconContentLayout: MyIconContentLayout
                 }));
                 map.geoObjects
                     .add(
@@ -513,14 +517,14 @@
                }else{
                    $(this).addClass('activ');
                    for (let i = 0; i< cam.length; i++){
-                       cfvam[i].options.set({'visible': true})
+                       fv[i].options.set({'visible': true})
                    }
                }
             });
 
         }
     </script>
-
+<script src="{% static 'js/vendor/datatables.min.js' %}"></script>
 {% endblock %}
 </body>
 
